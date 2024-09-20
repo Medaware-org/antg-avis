@@ -27,6 +27,9 @@ publishing {
             artifactId = "antg-mdk"
         }
     }
+    repositories {
+        mavenLocal()
+    }
 }
 
 kotlin {
