@@ -1,5 +1,5 @@
-# ANTG MDK Library
-The Medaware Design Kit Library for Anterogradia.
+# Anterogradia Versatile Integration Suite
+The Medaware Library Suite for integrating Anterogradia into the MaW ecosystem.
 
 ### Building
 
