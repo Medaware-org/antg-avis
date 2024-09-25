@@ -24,7 +24,7 @@ publishing {
     publications {
         create<MavenPublication>("maven-publication") {
             from(components["kotlin"])
-            artifactId = "antg-mdk"
+            artifactId = "anterogradia-avis"
         }
     }
     repositories {

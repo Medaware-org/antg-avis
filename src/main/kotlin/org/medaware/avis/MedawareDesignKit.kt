@@ -1,4 +1,4 @@
-package org.medaware.mdk
+package org.medaware.avis
 
 import org.medaware.anterogradia.runtime.library.AnterogradiaLibrary
 import org.medaware.anterogradia.runtime.library.DiscreteFunction
