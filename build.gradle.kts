@@ -33,5 +33,5 @@ publishing {
 }
 
 kotlin {
-    jvmToolchain(20)
+    jvmToolchain(17)
 }
