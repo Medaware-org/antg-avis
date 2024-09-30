@@ -1,10 +1,9 @@
-# Anterogradia Versatile Integration Suite
+# Medaware AVIS™
+_Anterogradia Versatile Integration Suite_<br><br>
 The Medaware Library Suite for integrating Anterogradia into the MaW ecosystem.
 
-### Building
+### Medaware Dependencies
 
-This project imports ...
 ```kotlin
 implementation("org.medaware:anterogradia:+")
 ```
-Therefore, **Anterogradia** must be built and published to the local maven repo before building this library.
