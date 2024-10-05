@@ -19,6 +19,25 @@ fun AvisValidationException.causedBy(cause: Exception): AvisValidationException 
 enum class AvisMeta(
     val valueConstraints: Array<String>? = null,
     val supportsTypes: Array<String>? = null,
+
+    /**
+     * Defined the required **metadata keys** that need to be present when the property is set to a given value.
+     * ```kotlin
+     * PROPERTY (
+     *     valueConstraints = arrayOf("first-option", "second-option"),
+     *     requires = arrayOf(
+     *         // Required when property value is `first-option`
+     *         "first-option" to arrayOf("first-option-requirement"),
+     *
+     *         // Required when property value is `second-option`
+     *         "second-option" to arrayOf("second-option-requirement"),
+     *
+     *         // Required regardless of the value
+     *         null to arrayOf("unconditional-requirement")
+     *     )
+     * )
+     * ```
+     */
     val requires: Array<Pair<String?, Array<String>>>? = null
 ) {
 
@@ -30,7 +49,8 @@ enum class AvisMeta(
      */
     @RequiredMeta
     ELEMENT_TYPE(
-        arrayOf("heading", "subheading", "image", "text"), requires = arrayOf(
+        valueConstraints = arrayOf("heading", "subheading", "image", "text"),
+        requires = arrayOf(
             "heading" to arrayOf("text"),
             "subheading" to arrayOf("text"),
             "image" to arrayOf("src"),
