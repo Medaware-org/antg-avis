@@ -1,20 +1,13 @@
 package org.medaware.avis
 
+import org.medaware.avis.exception.AvisValidationException
+import org.medaware.avis.exception.causedBy
 import org.medaware.avis.model.AvisArticle
 import org.medaware.avis.model.AvisElement
-import java.lang.RuntimeException
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FIELD)
 annotation class RequiredMeta
-
-class AvisValidationException(override val message: String, override var cause: Throwable? = null) :
-    RuntimeException(message)
-
-fun AvisValidationException.causedBy(cause: Exception): AvisValidationException {
-    this.cause = cause
-    return this
-}
 
 enum class AvisMeta(
     val valueConstraints: Array<String>? = null,
