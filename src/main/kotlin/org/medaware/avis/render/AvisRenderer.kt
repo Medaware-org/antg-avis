@@ -69,6 +69,17 @@ class AvisRenderer(
         )
     }
 
+    @Renderer("BLANK_PLACEHOLDER")
+    fun blankPlaceholder(element: AvisElement): Node {
+        return FunctionCall(
+            prefix = "avis",
+            identifier = "heading",
+            arguments = hashMapOf(
+                "value" to "This is a blank element".node()
+            )
+        )
+    }
+
     fun renderElement(element: AvisElement): Node {
         val type = element[ELEMENT_TYPE]!!
 
