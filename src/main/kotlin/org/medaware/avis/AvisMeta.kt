@@ -75,11 +75,15 @@ enum class AvisMeta(
         fun validateMetaEntry(type: String, meta: Pair<String, String>): AvisValidationException? {
             val entry =
                 byNameOrNull(meta.first) ?: return AvisValidationException("Unknown metadata key \"${meta.first}\"")
-            if (entry.supportsTypes != null && entry.supportsTypes.contains(type))
+            if (entry.supportsTypes != null && !entry.supportsTypes.contains(type))
                 return AvisValidationException("The metadata field \"${meta.first}\" does not support element type \"$type\"")
             val constraints = entry.valueConstraints
-            if (constraints == null || constraints.contains(meta.second))
-                return AvisValidationException("The value \"${meta.second}\" does not meet value constraints of \"${meta.first}\"")
+            if (constraints != null && !constraints.contains(meta.second))
+                return AvisValidationException(
+                    "The value \"${meta.second}\" does not meet value constraints of \"${meta.first}\" Allowed values are: [${
+                        constraints.joinToString(separator = ", ")
+                    }]"
+                )
             return null
         }
 
@@ -107,7 +111,7 @@ enum class AvisMeta(
             var cause = validateMetaEntry(type, ELEMENT_TYPE.toString() to meta[ELEMENT_TYPE.toString()]!!)
 
             if (cause != null)
-                return AvisValidationException("$prefix The meta entry for type is invalid").causedBy(cause)
+                return AvisValidationException("$prefix The meta entry for $ELEMENT_TYPE is invalid").causedBy(cause)
 
             for ((key, value) in meta) forMeta@ {
                 cause = validateMetaEntry(type, key to value)
@@ -122,8 +126,8 @@ enum class AvisMeta(
                         return@forEach
 
                     req.second.forEach { requiredKey ->
-                        if (!meta.containsKey(requiredKey))
-                            return AvisValidationException("The property \"$requiredKey\" is not present, but is required by \"$key\"")
+                        if (!meta.containsKey(requiredKey.toUpperCase()))
+                            return AvisValidationException("The property \"${requiredKey.toUpperCase()}\" is not present, but is${if (req.first != null) "" else " unconditionally"} required by \"${key.toUpperCase()}\"")
                     }
                 }
             }
