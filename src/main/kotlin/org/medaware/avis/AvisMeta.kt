@@ -42,17 +42,17 @@ enum class AvisMeta(
      */
     @RequiredMeta
     ELEMENT_TYPE(
-        valueConstraints = arrayOf("heading", "subheading", "image", "text"),
+        valueConstraints = arrayOf("HEADING", "SUBHEADING", "IMAGE", "TEXT"),
         requires = arrayOf(
-            "heading" to arrayOf("text"),
-            "subheading" to arrayOf("text"),
-            "image" to arrayOf("src"),
-            "text" to arrayOf("text")
+            "HEADING" to arrayOf("TEXT"),
+            "SUBHEADING" to arrayOf("TEXT"),
+            "IMAGE" to arrayOf("SRC"),
+            "TEXT" to arrayOf("TEXT")
         )
     ),
 
-    SRC(supportsTypes = arrayOf("image")),
-    TEXT(supportsTypes = arrayOf("heading", "subheading", "text"));
+    SRC(supportsTypes = arrayOf("IMAGE")),
+    TEXT(supportsTypes = arrayOf("HEADING", "SUBHEADING", "TEXT"));
 
     companion object {
         fun byNameOrNull(name: String): AvisMeta? = try {
@@ -119,8 +119,8 @@ enum class AvisMeta(
                         return@forEach
 
                     req.second.forEach { requiredKey ->
-                        if (!meta.containsKey(requiredKey.toUpperCase()))
-                            return AvisValidationException("The property \"${requiredKey.toUpperCase()}\" is not present, but is${if (req.first != null) "" else " unconditionally"} required by \"${key.toUpperCase()}\"")
+                        if (!meta.containsKey(requiredKey.uppercase()))
+                            return AvisValidationException("The property \"${requiredKey.uppercase()}\" is not present, but is${if (req.first != null) "" else " unconditionally"} required by \"${key.toUpperCase()}\"")
                     }
                 }
             }
