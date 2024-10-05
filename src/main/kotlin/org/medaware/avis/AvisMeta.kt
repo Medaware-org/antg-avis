@@ -18,7 +18,8 @@ fun AvisValidationException.causedBy(cause: Exception): AvisValidationException 
 
 enum class AvisMeta(
     val valueConstraints: Array<String>? = null,
-    val supportsTypes: Array<String>? = null
+    val supportsTypes: Array<String>? = null,
+    val requires: Array<Pair<String?, Array<String>>>? = null
 ) {
 
     /**
@@ -28,7 +29,14 @@ enum class AvisMeta(
      * meta entries refers to the value constraints of this enum.
      */
     @RequiredMeta
-    ELEMENT_TYPE(arrayOf("heading", "subheading", "image", "text")),
+    ELEMENT_TYPE(
+        arrayOf("heading", "subheading", "image", "text"), requires = arrayOf(
+            "heading" to arrayOf("text"),
+            "subheading" to arrayOf("text"),
+            "image" to arrayOf("src"),
+            "text" to arrayOf("text")
+        )
+    ),
 
     SRC(supportsTypes = arrayOf("image")),
     TEXT(supportsTypes = arrayOf("heading", "subheading", "text"));
@@ -81,10 +89,23 @@ enum class AvisMeta(
             if (cause != null)
                 return AvisValidationException("$prefix The meta entry for type is invalid").causedBy(cause)
 
-            for ((key, value) in meta) {
+            for ((key, value) in meta) forMeta@ {
                 cause = validateMetaEntry(type, key to value)
+
                 if (cause != null)
                     return AvisValidationException("$prefix Validation failed for meta entry \"$key\"").causedBy(cause)
+
+                // Check if all required properties are present
+                val metaEnum = byNameOrNull(key)!!
+                metaEnum.requires?.forEach { req ->
+                    if (req.first != null && req.first != value)
+                        return@forEach
+
+                    req.second.forEach { requiredKey ->
+                        if (!meta.containsKey(requiredKey))
+                            return AvisValidationException("The property \"$requiredKey\" is not present, but is required by \"$key\"")
+                    }
+                }
             }
 
             return null
