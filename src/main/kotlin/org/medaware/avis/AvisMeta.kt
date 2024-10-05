@@ -33,69 +33,72 @@ enum class AvisMeta(
     SRC(supportsTypes = arrayOf("image")),
     TEXT(supportsTypes = arrayOf("heading", "subheading", "text"));
 
-    fun byNameOrNull(name: String): AvisMeta? = try {
-        valueOf(name)
-    } catch (e: IllegalArgumentException) {
-        null
-    }
-
-    /**
-     * Check whether the given metadata entry is valid in context of the given type.
-     * Returned exception to be used as a cause.
-     */
-    fun validateMetaEntry(type: String, meta: Pair<String, String>): AvisValidationException? {
-        val entry = byNameOrNull(meta.first) ?: return AvisValidationException("Unknown metadata key \"${meta.first}\"")
-        if (entry.supportsTypes != null && entry.supportsTypes.contains(type))
-            return AvisValidationException("The metadata field \"${meta.first}\" does not support element type \"$type\"")
-        val constraints = entry.valueConstraints
-        if (constraints == null || constraints.contains(meta.second))
-            return AvisValidationException("The value \"${meta.second}\" does not meet value constraints of \"${meta.first}\"")
-        return null
-    }
-
-    /**
-     * Returns a list of all required metadata entries that must be present in all elements regardless
-     * of their types.
-     */
-    fun requiredMetadata(): List<AvisMeta> =
-        AvisMeta::class.java.declaredFields.filter { it.isAnnotationPresent(RequiredMeta::class.java) }
-            .map { valueOf(it.name) }
-
-    fun validateElement(element: AvisElement): AvisValidationException? {
-        val meta = element.metadata
-
-        val prefix = "(Element ID ${element.id} \"${element.handle}\")"
-
-        // First, we need to make sure that the element has all the unconditionally required meta entries.
-        // (Just checking keys for now)
-        requiredMetadata().forEach {
-            if (meta[it.name] == null)
-                return AvisValidationException("$prefix The element does not have the required meta entry \"${it.name}\"")
+    companion object {
+        fun byNameOrNull(name: String): AvisMeta? = try {
+            valueOf(name)
+        } catch (e: IllegalArgumentException) {
+            null
         }
 
-        val type = meta[ELEMENT_TYPE.toString()]!!
-        var cause = validateMetaEntry(type, ELEMENT_TYPE.toString() to meta[ELEMENT_TYPE.toString()]!!)
-
-        if (cause != null)
-            return AvisValidationException("$prefix The meta entry for type is invalid").causedBy(cause)
-
-        for ((key, value) in meta) {
-            cause = validateMetaEntry(type, key to value)
-            if (cause != null)
-                return AvisValidationException("$prefix Validation failed for meta entry \"$key\"").causedBy(cause)
+        /**
+         * Check whether the given metadata entry is valid in context of the given type.
+         * Returned exception to be used as a cause.
+         */
+        fun validateMetaEntry(type: String, meta: Pair<String, String>): AvisValidationException? {
+            val entry =
+                byNameOrNull(meta.first) ?: return AvisValidationException("Unknown metadata key \"${meta.first}\"")
+            if (entry.supportsTypes != null && entry.supportsTypes.contains(type))
+                return AvisValidationException("The metadata field \"${meta.first}\" does not support element type \"$type\"")
+            val constraints = entry.valueConstraints
+            if (constraints == null || constraints.contains(meta.second))
+                return AvisValidationException("The value \"${meta.second}\" does not meet value constraints of \"${meta.first}\"")
+            return null
         }
 
-        return null
-    }
+        /**
+         * Returns a list of all required metadata entries that must be present in all elements regardless
+         * of their types.
+         */
+        fun requiredMetadata(): List<AvisMeta> =
+            AvisMeta::class.java.declaredFields.filter { it.isAnnotationPresent(RequiredMeta::class.java) }
+                .map { valueOf(it.name) }
 
-    fun validateArticle(article: AvisArticle) {
-        var cause: AvisValidationException? = null
+        fun validateElement(element: AvisElement): AvisValidationException? {
+            val meta = element.metadata
 
-        article.elements.forEach { element ->
-            cause = validateElement(element)
+            val prefix = "(Element ID ${element.id} \"${element.handle}\")"
+
+            // First, we need to make sure that the element has all the unconditionally required meta entries.
+            // (Just checking keys for now)
+            requiredMetadata().forEach {
+                if (meta[it.name] == null)
+                    return AvisValidationException("$prefix The element does not have the required meta entry \"${it.name}\"")
+            }
+
+            val type = meta[ELEMENT_TYPE.toString()]!!
+            var cause = validateMetaEntry(type, ELEMENT_TYPE.toString() to meta[ELEMENT_TYPE.toString()]!!)
+
             if (cause != null)
-                throw AvisValidationException("Failed validation for article \"${article.title}\" ID ${article.id}")
-                    .causedBy(cause)
+                return AvisValidationException("$prefix The meta entry for type is invalid").causedBy(cause)
+
+            for ((key, value) in meta) {
+                cause = validateMetaEntry(type, key to value)
+                if (cause != null)
+                    return AvisValidationException("$prefix Validation failed for meta entry \"$key\"").causedBy(cause)
+            }
+
+            return null
+        }
+
+        fun validateArticle(article: AvisArticle) {
+            var cause: AvisValidationException? = null
+
+            article.elements.forEach { element ->
+                cause = validateElement(element)
+                if (cause != null)
+                    throw AvisValidationException("Failed validation for article \"${article.title}\" ID ${article.id}")
+                        .causedBy(cause)
+            }
         }
     }
 
