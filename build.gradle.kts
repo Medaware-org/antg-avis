@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.cli.jvm.main
+
 plugins {
     kotlin("jvm") version "2.0.0"
     `maven-publish`
@@ -18,6 +20,14 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+sourceSets {
+    main {
+        resources {
+            kotlin.srcDirs("$rootDir/src/main/resources")
+        }
+    }
 }
 
 publishing {

@@ -2,13 +2,11 @@ package org.medaware.avis.render
 
 import org.medaware.anterogradia.syntax.FunctionCall
 import org.medaware.anterogradia.syntax.Node
-import org.medaware.anterogradia.syntax.Script
 import org.medaware.anterogradia.syntax.StringLiteral
 import org.medaware.avis.AvisMeta
 import org.medaware.avis.AvisMeta.ELEMENT_TYPE
-import org.medaware.avis.AvisMeta.TEXT
 import org.medaware.avis.AvisMeta.SRC
-import org.medaware.avis.MedawareDesignKit
+import org.medaware.avis.AvisMeta.TEXT
 import org.medaware.avis.exception.AvisRendererException
 import org.medaware.avis.model.AvisArticle
 import org.medaware.avis.model.AvisElement
@@ -73,10 +71,17 @@ class AvisRenderer(
     fun blankPlaceholder(element: AvisElement): Node {
         return FunctionCall(
             prefix = "avis",
-            identifier = "heading",
-            arguments = hashMapOf(
-                "value" to "This is a blank element".node()
-            )
+            identifier = "blank",
+            arguments = hashMapOf()
+        )
+    }
+
+    @Renderer("META_HEADER")
+    fun headerRenderer(element: AvisElement): Node {
+        return FunctionCall(
+            prefix = "avis",
+            identifier = "header",
+            arguments = hashMapOf()
         )
     }
 

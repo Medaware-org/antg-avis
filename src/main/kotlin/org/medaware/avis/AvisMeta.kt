@@ -9,6 +9,10 @@ import org.medaware.avis.model.AvisElement
 @Target(AnnotationTarget.FIELD)
 annotation class RequiredMeta
 
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FIELD)
+annotation class Defaultable(val value: String)
+
 enum class AvisMeta(
     val valueConstraints: Array<String>? = null,
     val supportsTypes: Array<String>? = null,
@@ -42,7 +46,7 @@ enum class AvisMeta(
      */
     @RequiredMeta
     ELEMENT_TYPE(
-        valueConstraints = arrayOf("HEADING", "SUBHEADING", "IMAGE", "TEXT", "BLANK_PLACEHOLDER"),
+        valueConstraints = arrayOf("HEADING", "SUBHEADING", "IMAGE", "TEXT", "BLANK_PLACEHOLDER", "META_HEADER"),
         requires = arrayOf(
             "HEADING" to arrayOf("TEXT"),
             "SUBHEADING" to arrayOf("TEXT"),
@@ -51,14 +55,40 @@ enum class AvisMeta(
         )
     ),
 
+    @Defaultable("https://localproduct.co/wp-content/uploads/2023/05/Weed-Pre-Roll-Benefits-and-Drawbacks-1200x675.jpg")
     SRC(supportsTypes = arrayOf("IMAGE")),
+
+    @Defaultable("Lorem ipsum dolor sit amet, consectetur adipiscing elit")
     TEXT(supportsTypes = arrayOf("HEADING", "SUBHEADING", "TEXT"));
+
+    fun defaultValue(): String? {
+        val field = AvisMeta::class.java.declaredFields.find {
+            it.name == this.toString() && it.isAnnotationPresent(Defaultable::class.java)
+        } ?: return null
+        return field.getAnnotation(Defaultable::class.java).value
+    }
+
+    fun requirements(value: String): Array<String> {
+        this.requires ?: return arrayOf()
+        return (this.requires.find { it.first == value.uppercase() } ?: return arrayOf()).second
+    }
 
     companion object {
         fun byNameOrNull(name: String): AvisMeta? = try {
             valueOf(name)
         } catch (e: IllegalArgumentException) {
             null
+        }
+
+        fun <T> use(
+            type: String,
+            value: String,
+            lambda: (meta: AvisMeta, requirements: Array<String>) -> T
+        ): T? {
+            val meta = AvisMeta.byNameOrNull(type)
+                ?: throw AvisValidationException("Unknown meta entry '$type' for element type")
+            val req = meta.requirements(value.uppercase())
+            return lambda(meta, req)
         }
 
         /**
