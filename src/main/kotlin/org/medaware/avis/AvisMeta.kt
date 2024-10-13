@@ -46,7 +46,7 @@ enum class AvisMeta(
      */
     @RequiredMeta
     ELEMENT_TYPE(
-        valueConstraints = arrayOf("HEADING", "SUBHEADING", "IMAGE", "TEXT", "BLANK_PLACEHOLDER", "META_HEADER"),
+        valueConstraints = arrayOf("HEADING", "SUBHEADING", "IMAGE", "TEXT", "BLANK_PLACEHOLDER"),
         requires = arrayOf(
             "HEADING" to arrayOf("TEXT"),
             "SUBHEADING" to arrayOf("TEXT"),

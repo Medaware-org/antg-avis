@@ -77,15 +77,6 @@ class AvisRenderer(
         )
     }
 
-    @Renderer("META_HEADER")
-    fun headerRenderer(element: AvisElement): Node {
-        return FunctionCall(
-            prefix = "avis",
-            identifier = "header",
-            arguments = hashMapOf()
-        )
-    }
-
     fun renderElement(element: AvisElement): Node {
         val type = element[ELEMENT_TYPE]!!
 
