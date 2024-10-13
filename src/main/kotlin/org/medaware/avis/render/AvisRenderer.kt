@@ -10,6 +10,7 @@ import org.medaware.avis.AvisMeta.TEXT
 import org.medaware.avis.exception.AvisRendererException
 import org.medaware.avis.model.AvisArticle
 import org.medaware.avis.model.AvisElement
+import org.medaware.avis.resource.AvisCallback
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
@@ -51,7 +52,7 @@ class AvisRenderer(
             prefix = "avis",
             identifier = "img",
             arguments = hashMapOf(
-                "src" to element[SRC]!!.node()
+                "src" to AvisCallback.resourceCallback(element[SRC]!!).node()
             )
         )
     }
