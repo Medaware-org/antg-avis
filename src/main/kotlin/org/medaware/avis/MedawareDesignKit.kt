@@ -29,7 +29,7 @@ class MedawareDesignKit(val runtime: Runtime) {
     @DiscreteFunction(identifier = "heading", params = ["value"])
     fun heading(value: Node): String {
         return """
-            <h1>${value.evaluate(runtime)}</h1>
+            <p class="tan-element tan-heading">${value.evaluate(runtime)}</p>
         """.trimIndent()
     }
 
@@ -43,14 +43,7 @@ class MedawareDesignKit(val runtime: Runtime) {
     @DiscreteFunction(identifier = "subheading", params = ["value"])
     fun subheading(value: Node): String {
         return """
-            <h2>${value.evaluate(runtime)}</h2>
-        """.trimIndent()
-    }
-
-    @DiscreteFunction(identifier = "lead", params = ["value"])
-    fun lead(value: Node): String {
-        return """
-            <p class="tan-element tan-lead">${value.evaluate(runtime)}</p>
+            <p class="tan-element tan-sub-heading">${value.evaluate(runtime)}</p>
         """.trimIndent()
     }
 
@@ -65,6 +58,15 @@ class MedawareDesignKit(val runtime: Runtime) {
     fun blank(): String {
         return """
             <div class="tan-element tan-blank">Blank Element</div>
+        """.trimIndent()
+    }
+
+    @DiscreteFunction(identifier = "id_wrap", params = ["id", "value"])
+    fun id_wrap(id: Node, value: Node): String {
+        return """
+            <div class="tan-${id.evaluate(runtime)}">
+                ${value.evaluate(runtime)}
+            </div>
         """.trimIndent()
     }
 

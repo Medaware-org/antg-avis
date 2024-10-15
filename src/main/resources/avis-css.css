@@ -1,20 +1,41 @@
+.tan-article {
+    font-family: "Times New Roman", sans-serif !important;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
 .tan-element {
     width: 100%;
 }
 
-.tan-article {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.tan-img {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-.tan-img {
+.tan-heading {
+    font-size: 36px;
+    font-weight: 700;
 }
 
 .tan-lead {
+    font-size: 24px;
+    font-weight: 700;
 }
 
 .tan-text {
+    font-size: 23px;
+    font-weight: 400;
+}
+
+.tan-sub-heading {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.tan-heading, .tan-lead, .tan-text, .tan-sub-heading {
+    line-height: 1.5em;
 }
 
 .tan-blank {

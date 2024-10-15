@@ -92,7 +92,16 @@ class AvisRenderer(
         if (method == null)
             throw AvisRendererException("Could not find a renderer for element type \"$type\".")
 
-        return method.invoke(this, element) as Node
+        val elementOutput = method.invoke(this, element) as Node
+
+        val wrapped = FunctionCall(
+            "avis", "id_wrap", hashMapOf(
+                "id" to element.handle.node(),
+                "value" to elementOutput
+            ), variadic = false
+        )
+
+        return wrapped
     }
 
     fun render(): Node {
