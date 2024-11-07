@@ -11,7 +11,7 @@ annotation class RequiredMeta
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FIELD)
-annotation class Defaultable(val value: String)
+annotation class Defaultable(val values: Array<String>)
 
 enum class AvisMeta(
     val valueConstraints: Array<String>? = null,
@@ -55,17 +55,21 @@ enum class AvisMeta(
         )
     ),
 
-    @Defaultable("https://localproduct.co/wp-content/uploads/2023/05/Weed-Pre-Roll-Benefits-and-Drawbacks-1200x675.jpg")
+    @Defaultable(["https://localproduct.co/wp-content/uploads/2023/05/Weed-Pre-Roll-Benefits-and-Drawbacks-1200x675.jpg", "https://bhoperehab.com/wp-content/uploads/2024/04/most-addictive-drugs-scaled.jpeg",
+    "https://cdn.britannica.com/05/213705-050-4331A79A.jpg", "https://images.squarespace-cdn.com/content/v1/5f7de1b2d010e35cb300cd25/1602610585195-7AGBCAW5TOIHWEBPJ9EU/010517F_44676_prerolls-e1515050215339-800x450-c-default.jpg",
+    "https://grandcannabis.ca/wp-content/uploads/2023/04/cannabis-joints.jpg", "https://cdn.prod.website-files.com/65c50dacd140acc9df7b3871/66e975bd791c472c300f1555_66d8031e7292e374c732d599_Blunt-wraps-are-thicker-slowerburning.jpeg",
+    "https://img.freepik.com/free-photo/marijuana-buds-with-marijuana-joints-cannabis-oil_1150-20687.jpg", "https://images.ctfassets.net/4f3rgqwzdznj/5s6mf1qhltELW9Bns3BvFN/43ed57a9cfc797e2fffc0855bbfef6ff/magic_mushrooms-1289017175.jpg",
+    "https://www.dea.gov/sites/default/files/2018-07/lsd.jpg", "https://i.etsystatic.com/27005300/r/il/4d7994/4866867057/il_fullxfull.4866867057_sfjw.jpg", "https://media.karousell.com/media/photos/products/2024/9/19/etomidate_1726709096_0c2d4dbb_progressive.jpg"])
     SRC(supportsTypes = arrayOf("IMAGE")),
 
-    @Defaultable("Lorem ipsum dolor sit amet, consectetur adipiscing elit")
+    @Defaultable(["Lorem ipsum dolor sit amet, consectetur adipiscing elit"])
     TEXT(supportsTypes = arrayOf("HEADING", "SUBHEADING", "TEXT"));
 
     fun defaultValue(): String? {
         val field = AvisMeta::class.java.declaredFields.find {
             it.name == this.toString() && it.isAnnotationPresent(Defaultable::class.java)
         } ?: return null
-        return field.getAnnotation(Defaultable::class.java).value
+        return field.getAnnotation(Defaultable::class.java).values.random()
     }
 
     fun requirements(value: String): Array<String> {
